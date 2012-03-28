@@ -17,6 +17,8 @@ class Ds2rdf:
     except IOError as (errno, strerror):
       print "I/O error({0}): {2} {1}".format(errno, strerror, csvFile)
       exit(0)
+      
+
   def convert(self):
     store = Graph()
     store.bind("dc", "http://purl.org/dc/elements/1.1/")

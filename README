@@ -1,3 +1,7 @@
-Version: 20120229
+Version: 20120328
 
 Tools for exporting and importing metadata from/to DSpace into RDF
+
+Requirements:
+
+pip install -i requirements.txt
