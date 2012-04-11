@@ -1,0 +1,12 @@
+--Goto the root path and run this script
+
+--Syntax
+/*At the command line:
+[dspace]/bin/import --add --eperson=joe@user.com --collection=CollectionID --source=items_dir --mapfile=mapfile
+or by using the short form:
+[dspace]/bin/import -a -e joe@user.com -c CollectionID -s items_dir -m mapfile*/
+
+
+--Example
+
+sudo /opt/dspace/bin/dspace dsrun org.dspace.app.itemimport.ItemImport -a -e sridhn@rpi.edu -c 123456789/2 -s ./opt/dspace/bin/archive_directory/item_000/ -m ./opt/dspace/bin/mapfile sudo /opt/dspace/bin/dspace dsrun org.dspace.app.itemimport.ItemImport -a -e sridhn@rpi.edu -c 123456789/2 -s ./opt/dspace/bin/archive_directory/item_000/ -m ./opt/dspace/bin/mapfile
