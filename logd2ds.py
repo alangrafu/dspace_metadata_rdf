@@ -51,7 +51,7 @@ LIMIT 5
 """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
-    print """id,collection,dc.contributor.author,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance[en],dc.identifier.citation[en],dc.identifier.uri,dc.subject[en_US],dc.title[en_US],dc.type[en_US]"""
+    print """filename,dc.contributor.author,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.type"""
     id=1
     for result in results["results"]["bindings"]:
       da=result["dataset"]["value"]
@@ -60,8 +60,8 @@ LIMIT 5
       d=result["modified"]["value"]
       desc=result["desc"]["value"]
       sub=result["subject"]["value"]
-      print '"%d","%d","%s","%s","%s","%s","","","%s","%s","%s","Data"' % (id,self.collection,s,d,d,d,da,sub,t)
-        #result["dataset"]["value"],result["modified"]["value"])   
+      print ',"%s","%s","%s","%s","","","%s","%s","%s","Data"' % (s,d,d,d,da,sub,t)
+      #result["dataset"]["value"],result["modified"]["value"])   
       id=id+1
 l2d = Logd2ds()
 l2d.getMetadata()
