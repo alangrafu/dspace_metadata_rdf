@@ -13,10 +13,9 @@ class Ds2rdf:
       self.source = csvFile
       self.reader = csv.reader(open(csvFile, 'rb'), delimiter=',')
 #      for row in self.reader:
-#        print ', '.join(row)
     except IOError as (errno, strerror):
-      print "I/O error({0}): {2} {1}".format(errno, strerror, csvFile)
-      exit(0)
+      print >> sys,stderr, "I/O error({0}): {2} {1}".format(errno, strerror, csvFile)
+      exit(1)
       
 
   def convert(self):
@@ -32,21 +31,41 @@ class Ds2rdf:
     #print header
     for row in self.reader:
       if len(row) != minSize:
-        print "Number of columns different than header ({0} vs. {1}). Skipping".format(len(row), minSize)
-        continue
-      store.add((row[8], DC['identifier'], Literal(row[0])))
-      names = row[2].split(", ")
-      creator=URIRef("http://data.rpi.edu/people/"+names[0].capitalize()+names[1].capitalize())
-      store.add((row[8], DC['creator'], creator))
-      store.add((creator, FOAF['firstName'], names[0]))
-      store.add((creator, DC['family_name'], names[1]))
-      store.add((row[8], DC['dateAccepted'], Literal(row[5])))
-      store.add((row[8], RDFS['comments'], Literal(row[6])))
-      store.add((row[8], DC['description'], Literal(row[6])))
-      store.add((row[8], DC['bibliographicCitation'], Literal(row[7])))
-      store.add((row[8], DC['title'], Literal(row[10])))
-      store.add((row[8], RDFS['label'], Literal(row[10])))
-      store.add((row[8], DC['subject'], URIRef(DATA+re.sub("\s", "_", row[9]))))
+        print  "Number of columns different than header ({0} vs. {1}). Skipping".format(len(row), minSize)
+        exit(1) #continue
+      store.add((row[15], DC['identifier'], Literal(row[0])))
+      print >> sys.stderr, "Processing "+row[20]
+      if re.search("^http", row[2]):
+        creator = row[2]
+        names = None
+        store.add((row[15], DC['creator'], creator))
+      else:
+        if len(row[2]) > 0:
+          people = row[2].split("||")
+        else:
+          people = row[3]
+        for i in people:
+          names = i.split(", ")
+          token = ""
+          if len(names) > 1:
+            token = "id/"+names[1].capitalize().replace(" ", "_")+names[0].capitalize().replace(" ", "_")
+            creator=URIRef("http://data.rpi.edu/"+token)
+            store.add((creator, FOAF['firstName'], Literal(names[0])))
+            store.add((creator, FOAF['lastName'], Literal(names[1])))
+          else:
+            token = "id/"+names[0].capitalize().replace(" ", "_").replace(".", "")
+            creator=URIRef("http://data.rpi.edu/"+token)
+            store.add((creator, FOAF['name'], Literal(names[0])))
+            store.add((creator, DC['title'], Literal(names[0])))
+          store.add((row[15], DC['creator'], creator))
+
+      store.add((row[15], DC['dateAccepted'], Literal(row[5])))
+      store.add((row[15], RDFS['comments'], Literal(row[6])))
+      store.add((row[15], DC['description'], Literal(row[6])))
+      store.add((row[15], DC['bibliographicCitation'], Literal(row[7])))
+      store.add((row[15], DC['title'], Literal(row[20])))
+      store.add((row[15], RDFS['label'], Literal(row[20])))
+      store.add((row[15], DC['subject'], URIRef(DATA+re.sub("\s", "_", row[9]))))
     print(store.serialize(format="pretty-xml"))
     
 d = Ds2rdf(sys.argv[1])

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import sys, traceback
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 class Logd2ds:
@@ -47,21 +48,32 @@ WHERE {
 }
 GROUP BY ?dataset
 ORDER BY ?dataset
-LIMIT 5
+#LIMIT 50
 """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
     print """filename,dc.contributor.author,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.type"""
     id=1
     for result in results["results"]["bindings"]:
-      da=result["dataset"]["value"]
-      t=result["dataset_title"]["value"]
-      s=result["source_name"]["value"]
-      d=result["modified"]["value"]
-      desc=result["desc"]["value"]
-      sub=result["subject"]["value"]
-      print ',"%s","%s","%s","%s","","","%s","%s","%s","Data"' % (s,d,d,d,da,sub,t)
+      try:
+        da=result["dataset"]["value"]
+        t=result["dataset_title"]["value"]
+        s=result["source_name"]["value"]
+        d=result["modified"]["value"]
+        desc=result["desc"]["value"]
+        if "subject" in result:
+          sub=result["subject"]["value"]
+        else:
+          sub=""
+        print ',"%s","%s","%s","%s","","","%s","%s","%s","Data"' % (s,d,d,d,da,sub,t)
       #result["dataset"]["value"],result["modified"]["value"])   
+      except:
+        print "Exception in user code:"
+        print '-'*60
+        traceback.print_exc(file=sys.stdout)
+        print '-'*60
+
+        exit(10)
       id=id+1
 l2d = Logd2ds()
 l2d.getMetadata()
