@@ -105,7 +105,7 @@ ORDER BY ?dataset
           sub=keywords[da]
         else:
           sub=""
-        print ',"http://logd.tw.rpi.edu","%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,t,desc)
+        print ',"http://logd.tw.rpi.edu/source/twc-rpi-edu","%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,t,desc)
       #result["dataset"]["value"],result["modified"]["value"])   
       except:
         print "Exception in user code:"
