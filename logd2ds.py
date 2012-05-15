@@ -1,13 +1,51 @@
 #!/usr/bin/python
-import sys, traceback
+import sys
+import traceback
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 class Logd2ds:
-  def __init__(self, endpoint = "http://logd.tw.rpi.edu/sparql"):
+  def __init__(self, endpoint = "http://logd.tw.rpi.edu:8890/sparql"):
     self.endpoint = endpoint
     self.collection = 18234
 
+
+  def getSubjects(self):
+    print >> sys.stderr, "Getting datasets' subjects"
+    keywords = {}
+    sparql = SPARQLWrapper(self.endpoint)
+    sparql.setQuery("""
+PREFIX foaf:       <http://xmlns.com/foaf/0.1/>
+PREFIX dcterms:    <http://purl.org/dc/terms/>
+PREFIX conversion: <http://purl.org/twc/vocab/conversion/>
+PREFIX catalog:    <http://logd.tw.rpi.edu/source/twc-rpi-edu/dataset/dataset-catalog/vocab/enhancement/1/>
+PREFIX ds92:       <http://logd.tw.rpi.edu/source/data-gov/dataset/92/vocab/enhancement/1/>
+
+SELECT DISTINCT
+        ?dataset
+        ?subject
+WHERE { 
+        GRAPH <http://logd.tw.rpi.edu/vocab/Dataset> {
+                ?dataset
+                        a conversion:Dataset
+        }
+        GRAPH <http://purl.org/twc/vocab/conversion/MetaDataset> {
+                ?dataset dcterms:subject ?subject 
+        }
+}
+""")
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    for result in results["results"]["bindings"]:
+      d =result['dataset']['value']
+      if d in keywords:
+        keywords[d] += "||"+result['subject']['value']
+      else:
+        keywords[d] = result['subject']['value']
+    return keywords
+
   def getMetadata(self):
+    keywords = self.getSubjects()
+    print >> sys.stderr, "Getting datasets' metadata"
     sparql = SPARQLWrapper(self.endpoint)
     sparql.setQuery("""
 PREFIX foaf:       <http://xmlns.com/foaf/0.1/>
@@ -52,7 +90,7 @@ ORDER BY ?dataset
 """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
-    print """filename,dc.contributor.author,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.type"""
+    print """filename,dc.contributor.author,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.description,dc.type"""
     id=1
     for result in results["results"]["bindings"]:
       try:
@@ -62,10 +100,10 @@ ORDER BY ?dataset
         d=result["modified"]["value"]
         desc=result["desc"]["value"]
         if "subject" in result:
-          sub=result["subject"]["value"]
+          sub=keywords[da]
         else:
           sub=""
-        print ',"%s","%s","%s","%s","","","%s","%s","%s","Data"' % (s,d,d,d,da,sub,t)
+        print ',"%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,desc,t)
       #result["dataset"]["value"],result["modified"]["value"])   
       except:
         print "Exception in user code:"
