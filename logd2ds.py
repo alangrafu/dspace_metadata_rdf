@@ -62,6 +62,7 @@ SELECT DISTINCT
 	(MIN(?Description) AS ?desc)
 	(MIN(?Title) AS ?dataset_title)
 	(MIN(?subj) AS ?subject)
+        (MIN(?hp) AS ?page)
 WHERE {
 	GRAPH <http://logd.tw.rpi.edu/vocab/Dataset> {
 		?dataset
@@ -72,6 +73,7 @@ WHERE {
 			dcterms:contributor ?source .
 		?version a conversion:VersionedDataset .
 		?version void:subset  ?layer .
+                OPTIONAL { ?dataset foaf:isPrimaryTopicOf ?hp }
 	}
 	GRAPH <http://purl.org/twc/vocab/conversion/MetaDataset> {
 		?dataset dcterms:title ?Title .
@@ -79,7 +81,6 @@ WHERE {
 		?dataset catalog:source_agency [ rdfs:label ?Agency ]
 		OPTIONAL { ?dataset catalog:dataset_category ?cat }
 		OPTIONAL { ?dataset dcterms:subject ?subj }
-		OPTIONAL { ?dataset foaf:homepage ?hp }
 		OPTIONAL { ?dataset catalog:reused_source_identifiers ?reused }
 	}
 #		?contrib rdfs:label ?source .
@@ -90,11 +91,12 @@ ORDER BY ?dataset
 """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
-    print """filename,dc.contributor.author,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.description,dc.type"""
+    print """filename,dc.publisher,dc.contributor,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.description,dc.type"""
     id=1
     for result in results["results"]["bindings"]:
       try:
         da=result["dataset"]["value"]
+        p=result["page"]["value"]
         t=result["dataset_title"]["value"]
         s=result["source_name"]["value"]
         d=result["modified"]["value"]
@@ -103,7 +105,7 @@ ORDER BY ?dataset
           sub=keywords[da]
         else:
           sub=""
-        print ',"%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,t,desc)
+        print ',"http://logd.tw.rpi.edu","%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,t,desc)
       #result["dataset"]["value"],result["modified"]["value"])   
       except:
         print "Exception in user code:"
@@ -113,5 +115,7 @@ ORDER BY ?dataset
 
         exit(10)
       id=id+1
+
+
 l2d = Logd2ds()
 l2d.getMetadata()
