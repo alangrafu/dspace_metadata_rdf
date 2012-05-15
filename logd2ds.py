@@ -103,7 +103,7 @@ ORDER BY ?dataset
           sub=keywords[da]
         else:
           sub=""
-        print ',"%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,desc,t)
+        print ',"%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,t,desc)
       #result["dataset"]["value"],result["modified"]["value"])   
       except:
         print "Exception in user code:"
