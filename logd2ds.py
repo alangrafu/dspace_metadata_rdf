@@ -32,6 +32,7 @@ WHERE {
                 ?dataset dcterms:subject ?subject 
         }
 }
+LIMIT 1000000
 """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
@@ -73,7 +74,6 @@ WHERE {
 			dcterms:contributor ?source .
 		?version a conversion:VersionedDataset .
 		?version void:subset  ?layer .
-                OPTIONAL { ?dataset foaf:isPrimaryTopicOf ?hp }
 	}
 	GRAPH <http://purl.org/twc/vocab/conversion/MetaDataset> {
 		?dataset dcterms:title ?Title .
@@ -82,6 +82,7 @@ WHERE {
 		OPTIONAL { ?dataset catalog:dataset_category ?cat }
 		OPTIONAL { ?dataset dcterms:subject ?subj }
 		OPTIONAL { ?dataset catalog:reused_source_identifiers ?reused }
+                OPTIONAL { ?dataset foaf:homepage ?hp }
 	}
 #		?contrib rdfs:label ?source .
 }
@@ -91,7 +92,7 @@ ORDER BY ?dataset
 """)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
-    print """filename,dc.publisher,dc.contributor,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.description,dc.type"""
+    print """filename,dc.source,dc.publisher,dc.contributor,dc.date.accessioned,dc.date.available,dc.date.issued,dc.description.provenance,dc.identifier.citation,dc.identifier.uri,dc.subject,dc.title,dc.description,dc.type"""
     id=1
     for result in results["results"]["bindings"]:
       try:
@@ -105,7 +106,7 @@ ORDER BY ?dataset
           sub=keywords[da]
         else:
           sub=""
-        print ',"http://logd.tw.rpi.edu/source/twc-rpi-edu","%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (s,d,d,d,da,sub,t,desc)
+        print ',"%s","http://logd.tw.rpi.edu/source/twc-rpi-edu","%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (p,s,d,d,d,da,sub,t,desc)
       #result["dataset"]["value"],result["modified"]["value"])   
       except:
         print "Exception in user code:"
