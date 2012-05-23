@@ -13,7 +13,7 @@ class Ds2rdf:
       self.source = csvFile
       self.reader = csv.reader(open(csvFile, 'rb'), delimiter=',')
     except IOError as (errno, strerror):
-      print >> sys,stderr, "I/O error({0}): {2} {1}".format(errno, strerror, csvFile)
+      print >> sys.stderr, "I/O error({0}): {2} {1}".format(errno, strerror, csvFile)
       exit(1)
       
 
@@ -33,12 +33,18 @@ class Ds2rdf:
     VOID = Namespace("http://rdfs.org/ns/void#")
     header = self.reader.next()   #Skip header  
     minSize = len(header)
-    #print header
+    semanticHeaders = {}
+    for i in header:
+      if re.match("^(dc\.)", i) != None:
+        print i
+      else:
+        print "Not vcalid! " + i
+    exit(0)
     for row in self.reader:
+      print >> sys.stderr, "Processing "+row[19]
       if len(row) != minSize:
         print >> sys.stderr,  "Number of columns different than header ({0} vs. {1}). Skipping".format(len(row), minSize)
         exit(1) #continue
-      print >> sys.stderr, "Processing "+row[19]
       datasetUri = URIRef(row[14])
       if re.search("^http", row[3]):
         creator = URIRef(row[3])
@@ -86,5 +92,8 @@ class Ds2rdf:
       store.add((datasetUri, RDFS['label'], Literal(row[19])))
     print(store.serialize(format="pretty-xml"))
     
+if len(sys.argv) < 2:
+  print >> sys.stderr, "No file selected"
+  exit(0)
 d = Ds2rdf(sys.argv[1])
 d.convert()
