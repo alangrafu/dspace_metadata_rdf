@@ -10,6 +10,7 @@ import re
 class Ds2rdf:
   def __init__(self, csvFile):
     try:
+      self.store = None
       self.source = csvFile
       self.reader = csv.reader(open(csvFile, 'rb'), delimiter=',')
     except IOError as (errno, strerror):
@@ -17,14 +18,22 @@ class Ds2rdf:
       exit(1)
       
 
+  def subjectProcessor(self, root, value):
+    DC = Namespace("http://purl.org/dc/elements/1.1/")
+    a = value.split("||")
+    for i in a:
+     self.store.add((root, DC['subject'], Literal(i)))
+
   def convert(self):
-    store = Graph()
-    store.bind("dc", "http://purl.org/dc/elements/1.1/")
-    store.bind("data", "http://data.rpi.edu/vocab/")
-    store.bind("owl", "http://www.w3.org/2002/07/owl#")
-    store.bind("rdfs", "http://www.w3.org/2000/01/rdf-schema#")
-    store.bind("foaf", "http://xmlns.com/foaf/0.1/")
-    store.bind("void", "http://rdfs.org/ns/void#")
+    self.store = Graph()
+    processors = {}
+    processors['subject'] = self.subjectProcessor
+    self.store.bind("dc", "http://purl.org/dc/elements/1.1/")
+    self.store.bind("data", "http://data.rpi.edu/vocab/")
+    self.store.bind("owl", "http://www.w3.org/2002/07/owl#")
+    self.store.bind("rdfs", "http://www.w3.org/2000/01/rdf-schema#")
+    self.store.bind("foaf", "http://xmlns.com/foaf/0.1/")
+    self.store.bind("void", "http://rdfs.org/ns/void#")
     DC = Namespace("http://purl.org/dc/elements/1.1/")
     OWL = Namespace("http://www.w3.org/2002/07/owl#")
     DATA = Namespace("http://data.rpi.edu/vocab/")
@@ -33,64 +42,32 @@ class Ds2rdf:
     VOID = Namespace("http://rdfs.org/ns/void#")
     header = self.reader.next()   #Skip header  
     minSize = len(header)
-    semanticHeaders = {}
+    semanticHeaders = [None]* len(header)
+    headerCounter = 0
     for i in header:
+      #Take only DC terms
       if re.match("^(dc\.)", i) != None:
-        print i
-      else:
-        print "Not vcalid! " + i
-    exit(0)
+        normalizedHeader = re.sub("\[\w+\]$", "", i)
+        normalizedHeader = re.sub("^dc\.", "", normalizedHeader)
+        semanticHeaders[headerCounter] = normalizedHeader
+        currentList = semanticHeaders[headerCounter]
+        currentList = normalizedHeader
+      headerCounter += 1
+
     for row in self.reader:
       print >> sys.stderr, "Processing "+row[19]
       if len(row) != minSize:
         print >> sys.stderr,  "Number of columns different than header ({0} vs. {1}). Skipping".format(len(row), minSize)
         exit(1) #continue
-      datasetUri = URIRef(row[14])
-      if re.search("^http", row[3]):
-        creator = URIRef(row[3])
-        names = None
-      else:
-        if len(row[2]) > 0:
-          people = row[2].split("||")
-        else:
-          del people[:]
-          people.append(row[3])
-          print >> sys.stderr, people
-        for i in people:
-          names = i.split(', ')
-          token = ""
-          if len(names) > 1:
-            token = "id/"+names[1].capitalize().replace(" ", "_")+names[0].capitalize().replace(" ", "_")
-            creator=URIRef("http://data.rpi.edu/"+token)
-            store.add((creator, FOAF['firstName'], Literal(names[1])))
-            store.add((creator, FOAF['lastName'], Literal(names[0])))
-          else:
-            if names != None:
-              token = "id/"+names[0].capitalize().replace(" ", "_").replace(".", "")
-              creator=URIRef("http://data.rpi.edu/"+token)
-              store.add((creator, FOAF['name'], Literal(names[0])))
-              store.add((creator, DC['title'], Literal(names[0])))
-      store.add((datasetUri, DC['contributor'], creator))
-      store.add((datasetUri, RDF['type'], VOID['Dataset']))
-      if len(row[15]) > 0:
-        store.add((datasetUri, OWL['sameAs'], URIRef(row[15])))
-        store.add((datasetUri, RDFS['seeAlso'], URIRef(row[15])))
-      if len(row[9]) > 0:
-        store.add((datasetUri, RDFS['comments'], Literal(row[9])))
-        store.add((datasetUri, DC['description'], Literal(row[9])))      
-      if len(row[17]) > 0:
-        subjects = row[17].split("||")
-        backwardsCompatibleSubject = ", ".join(subjects)
-        store.add((datasetUri, DC['subject'], Literal(backwardsCompatibleSubject)))
-        for subject in subjects:
-          store.add((datasetUri, DC['subject'], Literal(subject)))          
-      if len(row[8]) > 0:
-        store.add((datasetUri, DC['modified'], Literal(row[8],datatype=XSD.dateTime)))
-      if len(row[7]) > 0:
-        store.add((datasetUri, DC['issued'], Literal(row[7],datatype=XSD.date)))
-      store.add((datasetUri, DC['title'], Literal(row[19])))
-      store.add((datasetUri, RDFS['label'], Literal(row[19])))
-    print(store.serialize(format="pretty-xml"))
+      datasetUri = URIRef(row[semanticHeaders.index("identifier.uri")])
+      for index, cell in enumerate(row):
+        if semanticHeaders[index] in processors:
+          aux = processors[semanticHeaders[index]]
+          aux(datasetUri, cell)
+        #else:
+        #  self.store.add((datasetUri, DC[str(semanticHeaders[index])], Literal(cell)))
+        print semanticHeaders[index]," ->", cell
+    print(self.store.serialize(format="pretty-xml"))
     
 if len(sys.argv) < 2:
   print >> sys.stderr, "No file selected"
