@@ -8,26 +8,60 @@ import re
 
 
 class Ds2rdf:
-  def __init__(self, csvFile):
+  def __init__(self, csvFile, root = 'http://data.rpi.edu/id/'):
     try:
       self.store = None
+      self.rootUri = root
       self.source = csvFile
       self.reader = csv.reader(open(csvFile, 'rb'), delimiter=',')
     except IOError as (errno, strerror):
       print >> sys.stderr, "I/O error({0}): {2} {1}".format(errno, strerror, csvFile)
       exit(1)
       
-
+  def cleanLiteral(self, literal):
+    return literal.title().replace(".", "").replace(" ", "_")
+    
   def subjectProcessor(self, root, value):
     DC = Namespace("http://purl.org/dc/elements/1.1/")
     a = value.split("||")
     for i in a:
      self.store.add((root, DC['subject'], Literal(i)))
 
+  def dateIssuedProcessor(self, root, value):
+    DC = Namespace("http://purl.org/dc/elements/1.1/")
+    a = value.split("||")
+    for i in a:
+      self.store.add((root, DC['issued'], Literal(i)))
+      
+  def authorProcessor(self, root, value):
+    DC = Namespace("http://purl.org/dc/elements/1.1/")
+    a = value.split("||")
+    for i in a:
+      contrib = None
+      if re.match("^(http:\/\/)", i) != None:
+        contrib = i
+      else:
+        aux = i.split(", ")
+        if len(aux)>1:
+          contrib = self.rootUri+self.cleanLiteral(aux[1])+self.cleanLiteral(aux[0])
+        else:                     
+          contrib = self.rootUri+self.cleanLiteral(aux[0])
+      self.store.add((root, DC['contributor'], URIRef(contrib)))     
+      
+  def coverageProcessor(self, root, value):
+    DC = Namespace("http://purl.org/dc/elements/1.1/")
+    a = value.split("||")
+    for i in a:
+      self.store.add((root, DC['coverage'], Literal(i)))     
+      
   def convert(self):
     self.store = Graph()
     processors = {}
     processors['subject'] = self.subjectProcessor
+    processors['date.issued'] = self.dateIssuedProcessor
+    processors['contributor.author'] = self.authorProcessor
+    processors['contributor'] = self.authorProcessor
+    processors['coverage.spatial'] = self.coverageProcessor
     self.store.bind("dc", "http://purl.org/dc/elements/1.1/")
     self.store.bind("data", "http://data.rpi.edu/vocab/")
     self.store.bind("owl", "http://www.w3.org/2002/07/owl#")
@@ -61,12 +95,12 @@ class Ds2rdf:
         exit(1) #continue
       datasetUri = URIRef(row[semanticHeaders.index("identifier.uri")])
       for index, cell in enumerate(row):
-        if semanticHeaders[index] in processors:
-          aux = processors[semanticHeaders[index]]
-          aux(datasetUri, cell)
-        #else:
-        #  self.store.add((datasetUri, DC[str(semanticHeaders[index])], Literal(cell)))
-        print semanticHeaders[index]," ->", cell
+        if cell != "":
+          if semanticHeaders[index] in processors:
+            aux = processors[semanticHeaders[index]]
+            aux(datasetUri, cell)
+#          else:
+#            self.store.add((datasetUri, DC[str(semanticHeaders[index])], Literal(cell)))
     print(self.store.serialize(format="pretty-xml"))
     
 if len(sys.argv) < 2:
