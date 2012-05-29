@@ -53,7 +53,19 @@ class Ds2rdf:
     a = value.split("||")
     for i in a:
       self.store.add((root, DC['coverage'], Literal(i)))     
-      
+
+  def descriptionProcessor(self, root, value):
+    DC = Namespace("http://purl.org/dc/elements/1.1/")
+    a = value.split("||")
+    for i in a:
+      self.store.add((root, DC['description'], Literal(i)))     
+
+  def titleProcessor(self, root, value):
+    DC = Namespace("http://purl.org/dc/elements/1.1/")
+    a = value.split("||")
+    for i in a:
+      self.store.add((root, DC['title'], Literal(i)))     
+
   def convert(self):
     self.store = Graph()
     processors = {}
@@ -62,6 +74,8 @@ class Ds2rdf:
     processors['contributor.author'] = self.authorProcessor
     processors['contributor'] = self.authorProcessor
     processors['coverage.spatial'] = self.coverageProcessor
+    processors['description.abstract'] = self.descriptionProcessor
+    processors['title'] = self.titleProcessor
     self.store.bind("dc", "http://purl.org/dc/elements/1.1/")
     self.store.bind("data", "http://data.rpi.edu/vocab/")
     self.store.bind("owl", "http://www.w3.org/2002/07/owl#")
@@ -89,7 +103,6 @@ class Ds2rdf:
       headerCounter += 1
 
     for row in self.reader:
-      print >> sys.stderr, "Processing "+row[19]
       if len(row) != minSize:
         print >> sys.stderr,  "Number of columns different than header ({0} vs. {1}). Skipping".format(len(row), minSize)
         exit(1) #continue
@@ -101,7 +114,7 @@ class Ds2rdf:
             aux(datasetUri, cell)
 #          else:
 #            self.store.add((datasetUri, DC[str(semanticHeaders[index])], Literal(cell)))
-    print(self.store.serialize(format="pretty-xml"))
+    print(self.store.serialize(format="turtle"))
     
 if len(sys.argv) < 2:
   print >> sys.stderr, "No file selected"
