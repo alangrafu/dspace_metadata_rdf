@@ -106,7 +106,8 @@ ORDER BY ?dataset
           sub=keywords[da]
         else:
           sub=""
-        print ',"%s","http://logd.tw.rpi.edu/source/twc-rpi-edu","%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (p,s,d,d,d,da,sub,t,desc)
+        row = ',"%s","http://logd.tw.rpi.edu/source/twc-rpi-edu","%s","%s","%s","%s","","","%s","%s","%s","%s","Dataset"' % (p,s,d,d,d,da,sub,t,desc)
+        print row.encode('utf-8')
       #result["dataset"]["value"],result["modified"]["value"])   
       except:
         print "Exception in user code:"
