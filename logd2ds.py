@@ -10,10 +10,14 @@ class Logd2ds:
 
 
   def getSubjects(self):
-    print >> sys.stderr, "Getting datasets' subjects"
     keywords = {}
+    finished = False
+    limit = 10000
+    offset = 0
     sparql = SPARQLWrapper(self.endpoint)
-    sparql.setQuery("""
+    while finished == False:
+      print >> sys.stderr, "Getting datasets' subjects: ", offset
+      sparql.setQuery("""
 PREFIX foaf:       <http://xmlns.com/foaf/0.1/>
 PREFIX dcterms:    <http://purl.org/dc/terms/>
 PREFIX conversion: <http://purl.org/twc/vocab/conversion/>
@@ -32,16 +36,19 @@ WHERE {
                 ?dataset dcterms:subject ?subject 
         }
 }
-LIMIT 1000000
-""")
-    sparql.setReturnFormat(JSON)
-    results = sparql.query().convert()
-    for result in results["results"]["bindings"]:
-      d =result['dataset']['value']
-      if d in keywords:
-        keywords[d] += "||"+result['subject']['value']
+LIMIT """+str(limit)+" OFFSET "+str(offset*limit))
+      sparql.setReturnFormat(JSON)
+      results = sparql.query().convert()
+      for result in results["results"]["bindings"]:
+        d =result['dataset']['value']
+        if d in keywords:
+          keywords[d] += "||"+result['subject']['value']
+        else:
+          keywords[d] = result['subject']['value']
+      if len(results["results"]["bindings"]) == 0:
+        finished = True    
       else:
-        keywords[d] = result['subject']['value']
+        offset = offset + 1
     return keywords
 
   def getMetadata(self):
