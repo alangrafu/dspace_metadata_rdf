@@ -24,9 +24,11 @@ class Ds2rdf:
       exit(1)
       
   def readCollectionTree(self):
-    self.collectionTree["123456789/2"] = "community/twc/collection/logd" 
-    self.collectionTree["123456789/6"] = "community/humanities/collection/psychology" 
-    self.collectionTree["123456789/7"] = "community/humanities/collection/sociology" 
+    self.collectionTree["10833/30"] = "community/twc/collection/logd" 
+    self.collectionTree["10833/23"] = "community/chiefinformationofficer/collection/main" 
+    self.collectionTree["10833/12"] = "community/architecture/collection/main" 
+    self.collectionTree["10833/20"] = "community/science/collection/main" 
+    self.collectionTree["10833/3"] = "community/archives/collection/horsford" 
     
   def cleanLiteral(self, literal):
     return literal.title().replace(".", "").replace(" ", "_")
@@ -138,7 +140,7 @@ class Ds2rdf:
     for i in header:
       #Take only DC terms
       if re.match("^(dc\.)", i) != None:
-        normalizedHeader = re.sub("\[\w+\]$", "", i)
+        normalizedHeader = re.sub("\[\w*\]$", "", i)
         normalizedHeader = re.sub("^dc\.", "", normalizedHeader)
         self.semanticHeaders[headerCounter] = normalizedHeader
         currentList = self.semanticHeaders[headerCounter]
