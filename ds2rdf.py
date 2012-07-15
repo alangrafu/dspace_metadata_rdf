@@ -80,7 +80,31 @@ class Ds2rdf:
           self.store.add((URIRef(contrib), RDFS['label'], Literal(aux[0]) ))     
       self.store.add((root, DC['contributor'], URIRef(contrib)))     
       self.store.add((URIRef(contrib), RDF['type'], FOAF['Agent'] ))     
-      
+
+  def creatorProcessor(self, root, value):
+    DC = Namespace("http://purl.org/dc/elements/1.1/")
+    RDF = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    FOAF = Namespace("http://xmlns.com/foaf/0.1/")
+    RDFS = Namespace("http://www.w3.org/2000/01/rdf-schema#")
+    OWL = Namespace("http://www.w3.org/2002/07/owl#")
+    a = value.split("||")
+    for i in a:
+      contrib = None
+      if re.match("^(http:\/\/)", i) != None:
+        contrib = self.rootUri+'contributor/'+i.replace("://", "/")
+        self.store.add((URIRef(contrib), RDFS['label'], Literal(i) ))     
+        self.store.add((URIRef(contrib), OWL['sameAs'], URIRef(i) ))     
+      else:
+        aux = i.split(", ")
+        if len(aux)>1:
+          contrib = self.rootUri+'contributor/'+self.cleanLiteral(aux[1])+self.cleanLiteral(aux[0])
+          self.store.add((URIRef(contrib), RDFS['label'], Literal(aux[1]+" "+aux[0]) ))     
+        else:                     
+          contrib = self.rootUri+'contributor/'+self.cleanLiteral(aux[0])
+          self.store.add((URIRef(contrib), RDFS['label'], Literal(aux[0]) ))     
+      self.store.add((root, DC['creator'], URIRef(contrib)))     
+      self.store.add((URIRef(contrib), RDF['type'], FOAF['Agent'] ))   
+
   def coverageProcessor(self, root, value):
     DC = Namespace("http://purl.org/dc/elements/1.1/")
     a = value.split("||")
@@ -116,6 +140,7 @@ class Ds2rdf:
     processors['date.issued'] = self.dateIssuedProcessor
     processors['contributor.author'] = self.authorProcessor
     processors['contributor'] = self.authorProcessor
+    processors['creator'] = self.creatorProcessor
     processors['coverage.spatial'] = self.coverageProcessor
     processors['description.abstract'] = self.descriptionProcessor
     processors['identifier.uri'] = self.identifierProcessor
