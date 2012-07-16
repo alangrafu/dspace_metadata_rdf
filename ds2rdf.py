@@ -24,14 +24,14 @@ class Ds2rdf:
       exit(1)
       
   def readCollectionTree(self):
-    self.collectionTree["10833/30"] = "community/twc/collection/logd" 
-    self.collectionTree["10833/23"] = "community/chiefinformationofficer/collection/main" 
-    self.collectionTree["10833/12"] = "community/architecture/collection/main" 
-    self.collectionTree["10833/20"] = "community/science/collection/main" 
-    self.collectionTree["10833/3"] = "community/archives/collection/horsford" 
+    self.collectionTree["10833/30"] = "twc/logd" 
+    self.collectionTree["10833/23"] = "chiefinformationofficer/main" 
+    self.collectionTree["10833/12"] = "architecture/main" 
+    self.collectionTree["10833/20"] = "science/main" 
+    self.collectionTree["10833/3"] = "archives/horsford" 
     
   def cleanLiteral(self, literal):
-    return literal.title().replace(".", "").replace(" ", "_")
+    return literal.title().replace(".", "").replace(" ", "_").lower()
     
   def getDatasetUri(self, row):
     if row[1] in self.collectionTree:
@@ -39,7 +39,7 @@ class Ds2rdf:
     else:
       print >> sys.stderr, "Can't find collection string for %s" % row[1]
       exit(0)
-    uri = self.rootUri+collection+'/dataset/'+self.cleanLiteral( URIRef(row[self.semanticHeaders.index("title")]))
+    uri = self.rootUri+collection+'/'+self.cleanLiteral( URIRef(row[self.semanticHeaders.index("title")]))
     return uri
   
   def getCollectionUri(self, colId):
