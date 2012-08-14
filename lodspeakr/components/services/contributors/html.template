@@ -1,0 +1,19 @@
+{%include "../../header.inc"%}
+
+<div id="ds-body">
+ <h1 style="font-size: 266%;" class="ds-div-head">RPI Data Contributors</h1>
+ <div id="file_news_div_news" class="ds-static-div primary">
+  <p class="ds-paragraph">
+Welcome to RPI Data Services !
+Please watch this site for Rensselaer Polytechnic Institute's Data Presence. This site will evolve as capabilities and datasets are made available.
+   <ul>
+    {% for row in models.main %}
+        <li><a href="{{ row.resource.value }}">{{row.resourceLabel.value}}</a></li>
+    {% endfor %}
+   </ul>
+  </p>
+ </div>
+</div>
+
+
+{%include "../../footer.inc"%}

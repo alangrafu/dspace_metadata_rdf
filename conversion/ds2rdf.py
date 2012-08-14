@@ -24,6 +24,7 @@ class Ds2rdf:
       exit(1)
       
   def readCollectionTree(self):
+    #Mapping of dspace handles to a more readable URI
     self.collectionTree["10833/30"] = "twc/logd" 
     self.collectionTree["10833/23"] = "chiefinformationofficer/main" 
     self.collectionTree["10833/12"] = "architecture/main" 
@@ -67,7 +68,7 @@ class Ds2rdf:
     for i in a:
       contrib = None
       if re.match("^(http:\/\/)", i) != None:
-        contrib = self.rootUri+'contributor/'+i.replace("://", "/")
+        contrib = self.rootUri+'contributor/'+i.replace("http://", "").replace("/", "_")
         self.store.add((URIRef(contrib), RDFS['label'], Literal(i) ))     
         self.store.add((URIRef(contrib), OWL['sameAs'], URIRef(i) ))     
       else:

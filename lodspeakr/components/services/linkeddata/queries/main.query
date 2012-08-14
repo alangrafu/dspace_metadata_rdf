@@ -1,0 +1,4 @@
+SELECT DISTINCT ?s WHERE {
+?s ?p ?o
+}
+LIMIT 1

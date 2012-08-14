@@ -1,0 +1,5 @@
+SELECT DISTINCT ?resource ?resourceLabel WHERE {
+      ?resource a foaf:Agent;
+                rdfs:label ?resourceLabel .
+}order by ?resourceLabel
+limit 1000

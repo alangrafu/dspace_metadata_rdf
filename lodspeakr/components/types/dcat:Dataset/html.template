@@ -1,0 +1,12 @@
+{%include "../../header.inc"%}
+
+<div id="ds-body">
+ <h1>{{first.details.title.value}}</h1>
+ {%if first.details.date%}<h3>Issued: {{first.details.date.value|date:"m/d/Y"}}</h3>{%endif%}
+ <p><strong>Creators:</strong> {%for i in models.creators%}{%if !forloop.first%}, {%endif%}<a href='{{i.c.value}}'>{{i.cLabel.value}}</a>{%endfor%}</p>
+ <p><strong>Contributors:</strong> {%for i in models.contributors%}{%if !forloop.first%}, {%endif%}<a href='{{i.c.value}}'>{{i.cLabel.value}}</a>{%endfor%}</p>
+ <p><strong>Keywords: </strong>{%for i in models.subjects%}{%if !forloop.first%}, {%endif%}{{i.s.value}}{%endfor%}</p>
+ <p><strong>Same as: </strong>{%for i in models.sameas%}<span><a href='{{i.uri.value}}'>{{i.uri.curie}}</a></span>{%endfor%}</p>
+ <p>{{first.details.description.value}}</p>
+</div>    
+{%include "../../footer.inc"%}

@@ -1,0 +1,4 @@
+SELECT ?c ?cLabel WHERE{
+  <{{uri}}> dc:contributor ?c .
+  ?c rdfs:label ?cLabel
+}

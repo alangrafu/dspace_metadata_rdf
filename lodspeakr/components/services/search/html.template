@@ -1,0 +1,11 @@
+{%include "../../header.inc"%}
+
+<div id="ds-body">
+ <h1>Search results</h1>
+ <ul>
+  {%for i in models.main%}
+   <li><a href='{{i.resource.value}}'>{{i.label.value}}</a></li>
+  {%endfor%}
+ </ul>
+</div>
+{%include "../../footer.inc"%}

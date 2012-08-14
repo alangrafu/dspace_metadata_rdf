@@ -1,7 +1,28 @@
-Version: 20120328
+Version: 20120814
 
-Tools for exporting and importing metadata from/to DSpace into RDF
+Tools for exporting and importing metadata from/to DSpace into RDF and publishing data.rpi.edu
 
-Requirements:
 
+Conversion
+==========
+
+Enter in `conversion` folder
+
+* `ds2rdf.py` converts dspace metadata csv file into RDF
+* `logd2ds.py` takes data from LOGD and generates a file similar to the dspace metadata dump that can be imported into dspace
+* `examples/` Folder with data examples
+* `import_script.txt` Steps necessary to use the script
+
+
+Requirements for conversion scripts:
+------------------------------------
+
+```
 pip install -i requirements.txt
+```
+
+
+LODSPeaKr
+=========
+
+Contains components and configuration files necessary to run data.rpi.edu powered by LODSPeaKr.

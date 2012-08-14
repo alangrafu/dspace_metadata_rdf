@@ -1,0 +1,22 @@
+{%include "../../header.inc"%}
+
+<div id="ds-body">
+ <h1 style="font-size: 266%;" class="ds-div-head">{{first.details.label.value}}</h1>
+ <div id="file_news_div_news" class="ds-static-div primary"> 
+ <p class="ds-paragraph">
+  <table class='table table-striped'>
+   <thead>
+    <tr><th>Datasets</th></tr>
+   </thead>
+   {% for i in models.contributions %}
+   <tr>
+    <td>
+     <a href='{{i.dataset.value}}'>{{i.datasetLabel.value}}</a>
+    </td>
+   </tr>
+   {% endfor %}
+  </table>
+  </p>
+ </div>    
+</div>
+{%include "../../footer.inc"%}

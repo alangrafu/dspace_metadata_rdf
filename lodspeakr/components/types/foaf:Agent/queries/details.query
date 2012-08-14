@@ -1,0 +1,6 @@
+SELECT ?label ?other WHERE{
+  <{{uri}}> rdfs:label ?label
+  OPTIONAL{
+    <{{uri}}> owl:sameAs ?other
+  }
+}

@@ -1,0 +1,3 @@
+select (count( distinct ?d) as ?total) where{
+  ?d a foaf:Agent .
+}

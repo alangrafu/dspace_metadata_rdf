@@ -1,0 +1,10 @@
+SELECT ?dataset ?datasetLabel WHERE{
+  ?dataset 
+           dc:title ?datasetLabel .
+{
+  ?dataset dc:contributor <{{uri}}>
+}UNION{
+  ?dataset dc:creator <{{uri}}>
+}
+}ORDER BY ?datasetLabel
+LIMIT 20

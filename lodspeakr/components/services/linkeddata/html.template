@@ -1,0 +1,90 @@
+{%include "../../header.inc"%}
+
+    <div id="ds-body">
+    <div class="span9">
+      <h1>Linked Data</h1>
+      <p>Linked Data describes a set of good practices to publish and link information on the Web. This repository uses several Linked Data tecnologies and techniques to publish the metadata about our datasets:</p>
+      <ul>
+        <li>Using <a href='http://en.wikipedia.org/wiki/Uniform_resource_identifier'>URIs</a> to identify things (in this case, datasets, contributors, etc.)</li>
+        <li>Provide data in multiple representations, using <a href='http://en.wikipedia.org/wiki/Content_negotiation'>content negotiation</a>.</li>
+        <li>Use several serializations of RDF (<a href='http://en.wikipedia.org/wiki/N-Triples'>N-Triples</a>, <a href='http://en.wikipedia.org/wiki/Turtle_(syntax)'>Turtle</a> and <a href='http://en.wikipedia.org/wiki/RDF/XML'>RDF/XML</a> being the most common)</li>
+      </ul>
+      <h2>How to use Linked Data?</h2>
+      <p>There are sevearl ways to consume Linked Data. Here we list some of the most common ones<p>
+      <h3>Using a browser (for humans)</h3>
+      <p>The simplest way to consume this data is by pointing a web browser (Mozilla Firerfox, Google Chrome, to name a few) to a datasets URI. For example, clicking in <a href='http://data.rpi.edu/architecture/main/Performance_Of_A_Sensory_Substitution_System_To_Present_Music_Via_Touch'>http://data.rpi.edu/architecture/main/Performance_Of_A_Sensory_Substitution_System_To_Present_Music_Via_Touch</a>, the browser will be redirected to a document describing that dataset.</p>
+      <h3>Using cURL</h3>
+      <p>It is also possible to use <code>curl</code> to obtain different representations of the data, just by specifying which format we want. For example, to obtain the RDF/XML version of the previous dataset, we open a terminal an run:</p>
+      <pre class="prettyprint">
+curl -LH 'Accept: application/rdf+xml' http://data.rpi.edu/architecture/main/Performance_Of_A_Sensory_Substitution_System_To_Present_Music_Via_Touch
+      </pre>
+      <p>The results obtained is a RDF/XML document describing the dataset similar to this:</p>
+      <pre class="prettyprint">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:ns0="http://purl.org/dc/elements/1.1/"
+  xmlns:ns1="http://www.w3.org/2002/07/owl#"
+  xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#"&gt;
+
+  &lt;rdf:Description rdf:about="http://data.rpi.edu/architecture/main/Performance_Of_A_Sensory_Substitution_System_To_Present_Music_Via_Touch"&gt;
+    &lt;ns0:subject&gt;assistive technology&lt;/ns0:subject&gt;
+    &lt;ns0:subject&gt;Sensory Substitution System&lt;/ns0:subject&gt;
+    &lt;ns0:subject&gt;haptic&lt;/ns0:subject&gt;
+    &lt;ns0:subject&gt;touch&lt;/ns0:subject&gt;
+    &lt;ns0:contributor rdf:resource="http://data.rpi.edu/contributor/Rensselaer_Polytechnic_Institute_Empac"/&gt;
+    &lt;ns1:sameAs rdf:resource="http://hdl.handle.net/10833/28"/&gt;
+    &lt;ns0:creator rdf:resource="http://data.rpi.edu/contributor/PhilRobinson"/&gt;
+    &lt;ns0:creator rdf:resource="http://data.rpi.edu/contributor/PaulineOliveros"/&gt;
+    &lt;ns0:creator rdf:resource="http://data.rpi.edu/contributor/DougVan_Nort"/&gt;
+    &lt;ns0:creator rdf:resource="http://data.rpi.edu/contributor/JonasBraasch"/&gt;
+    &lt;ns0:creator rdf:resource="http://data.rpi.edu/contributor/DeborahEgloff"/&gt;
+    &lt;ns0:title&gt;Performance of a sensory substitution system to present music via touch&lt;/ns0:title&gt;
+    &lt;ns0:issued&gt;2012-05-23&lt;/ns0:issued&gt;
+  &lt;/rdf:Description&gt;
+
+  &lt;rdf:Description rdf:about="http://data.rpi.edu/contributor/Rensselaer_Polytechnic_Institute_Empac"&gt;
+    &lt;ns2:label&gt;Rensselaer Polytechnic Institute. EMPAC.&lt;/ns2:label&gt;
+  &lt;/rdf:Description&gt;
+
+  &lt;rdf:Description rdf:about="http://data.rpi.edu/contributor/PhilRobinson"&gt;
+    &lt;ns2:label&gt;Phil Robinson&lt;/ns2:label&gt;
+  &lt;/rdf:Description&gt;
+
+  &lt;rdf:Description rdf:about="http://data.rpi.edu/contributor/PaulineOliveros"&gt;
+    &lt;ns2:label&gt;Pauline Oliveros&lt;/ns2:label&gt;
+  &lt;/rdf:Description&gt;
+
+  &lt;rdf:Description rdf:about="http://data.rpi.edu/contributor/DougVan_Nort"&gt;
+    &lt;ns2:label&gt;Doug Van Nort&lt;/ns2:label&gt;
+  &lt;/rdf:Description&gt;
+
+  &lt;rdf:Description rdf:about="http://data.rpi.edu/contributor/JonasBraasch"&gt;
+    &lt;ns2:label&gt;Jonas Braasch&lt;/ns2:label&gt;
+  &lt;/rdf:Description&gt;
+
+  &lt;rdf:Description rdf:about="http://data.rpi.edu/contributor/DeborahEgloff"&gt;
+    &lt;ns2:label&gt;Deborah Egloff&lt;/ns2:label&gt;
+  &lt;/rdf:Description&gt;
+
+&lt;/rdf:RDF&gt;
+      </pre>
+
+      <h3>Using a Linked Data browser</h3>
+      <p>There are several linked data clients that can be used to visualize and navigate Linked Data:</p>
+      <ul>
+        <li><a href='http://marbles.sourceforge.net/'>Marbles</a> (<a href='http://www5.wiwiss.fu-berlin.de/marbles?mobile=false&lang=en&uri=http%3A%2F%2Fdata.rpi.edu%2Farchitecture%2Fmain%2FPerformance_Of_A_Sensory_Substitution_System_To_Present_Music_Via_Touch&purpose=defaultPurpose&Submit=Open'>example</a>)</li>
+        <li><a href='http://graves.cl/visualRDF'>visualRDF</a> (<a href='http://graves.cl/visualRDF/?url=http%3A%2F%2Fdata.rpi.edu%2Farchitecture%2Fmain%2FPerformance_Of_A_Sensory_Substitution_System_To_Present_Music_Via_Touch'>example</a>)</li>
+        <li><a href='http://linkeddata.uriburner.com/ode/'>OpenLink Data Explorer</a> (<a href='http://linkeddata.uriburner.com/ode/?uri%5B%5D=%3Ffind%3Dhttp%3A%2F%2Fdata.rpi.edu%2Farchitecture%2Fmain%2FPerformance_Of_A_Sensory_Substitution_System_To_Present_Music_Via_Touch%26format%3Dapplication%2Frdf%252Bxml&'>example</a>)</li>
+       </ul>
+    <h2>More information about Linked Data</h2>
+      <ul>
+        <li><a href='http://en.wikipedia.org/wiki/Linked_data'>Wikipedia article about Linked Data</a></li>
+        <li><a href='http://linkeddata.org/'>Linked Data portal, including tutorials and guides</a></li>
+        <li><a href='http://logd.tw.rpi.edu'>Linked Open Government Data, Tetherless World Constellation</a>
+        <li><a href='http://www.w3.org/standards/semanticweb/data'>W3C page on Linked Data</a></li>
+        <li><a href='http://linkeddatabook.com/editions/1.0/'>Online book on Linked Data</a></li>
+     </ul>
+    </div>
+    </div>
+{%include "../../footer.inc"%}
+

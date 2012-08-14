@@ -1,0 +1,5 @@
+SELECT ?title ?date ?description WHERE{
+  OPTIONAL{<{{uri}}> dc:title ?title}
+  OPTIONAL{<{{uri}}> dc:description ?description}
+  OPTIONAL{<{{uri}}> dc:issued ?date}
+}
