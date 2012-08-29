@@ -35,8 +35,10 @@
 			 PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
 			 
 			 SELECT DISTINCT ?resource ?resourceLabel WHERE {
+    			 GRAPH &lt;http://data.rpi.edu&gt;{
 			       ?resource a foaf:Agent;
 			                 rdfs:label ?resourceLabel .
+				 }
 			 }order by ?resourceLabel		
 		 </pre>
 		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=PREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0ASELECT+DISTINCT+%3Fresource+%3FresourceLabel+WHERE+%7B%0D%0A%09%09%09+++++++%3Fresource+a+foaf%3AAgent%3B%0D%0A%09%09%09+++++++++++++++++rdfs%3Alabel+%3FresourceLabel+.%0D%0A%09%09%09+%7Dorder+by+%3FresourceLabel%09%09&debug=on&timeout=&format=text%2Fhtml&save=display&fname='>here</a>.</p>
@@ -47,19 +49,25 @@
 			 PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
 			 
 			 SELECT ?dataset ?datasetLabel WHERE{
+ 			  GRAPH &lt;http://data.rpi.edu&gt;{
 			   ?dataset dc:title ?datasetLabel .
 			   {
 			    ?dataset dc:contributor &lt;http://data.rpi.edu/contributor/paulineoliveros&gt;
 			   }UNION{
 			    ?dataset dc:creator &lt;http://data.rpi.edu/contributor/paulineoliveros&gt;
 			   }
+			  }
 			 }ORDER BY ?datasetLabel
 		 </pre>
 		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=PREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Felements%2F1.1%2F%3E%0D%0A%09%09%09+%0D%0A%09%09%09+SELECT+%3Fdataset+%3FdatasetLabel+WHERE%7B%0D%0A%09%09%09+++%3Fdataset+dc%3Atitle+%3FdatasetLabel+.%0D%0A%09%09%09+++%7B%0D%0A%09%09%09++++%3Fdataset+dc%3Acontributor+%3Chttp%3A%2F%2Fdata.rpi.edu%2Fcontributor%2Fpaulineoliveros%3E%0D%0A%09%09%09+++%7DUNION%7B%0D%0A%09%09%09++++%3Fdataset+dc%3Acreator+%3Chttp%3A%2F%2Fdata.rpi.edu%2Fcontributor%2Fpaulineoliveros%3E%0D%0A%09%09%09+++%7D%0D%0A%09%09%09+%7DORDER+BY+%3FdatasetLabel&debug=on&timeout=&format=text%2Fhtml&save=display&fname='>here</a>.</p>
 
 		 <h4>Return description of a dataset in RDF</h4>
 		 <pre class="prettyprint">
-			 DESCRIBE &lt;http://data.rpi.edu/architecture/main/performance_of_a_sensory_substitution_system_to_present_music_via_touch&gt;
+			 DESCRIBE &lt;http://data.rpi.edu/architecture/main/performance_of_a_sensory_substitution_system_to_present_music_via_touch&gt; WHERE{
+		      GRAPH &lt;http://data.rpi.edu&gt;{
+			 				  &lt;http://data.rpi.edu/architecture/main/performance_of_a_sensory_substitution_system_to_present_music_via_touch&gt; ?p ?o
+			  }
+			 }
 		 </pre>
 		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=describe+%3Chttp%3A%2F%2Fdata.rpi.edu%2Farchitecture%2Fmain%2Fperformance_of_a_sensory_substitution_system_to_present_music_via_touch%3E&debug=on&timeout=&format=text%2Frdf%2Bn3&save=display&fname='>here</a>.</p>
 
