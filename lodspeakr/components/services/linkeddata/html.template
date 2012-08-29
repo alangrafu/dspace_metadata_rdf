@@ -3,7 +3,78 @@
     <div id="ds-body">
     <div class="span9">
       <h1>Linked Data</h1>
-      <p>Linked Data describes a set of good practices to publish and link information on the Web. This repository uses several Linked Data tecnologies and techniques to publish the metadata about our datasets:</p>
+	  <p>Linked Data describes a set of good practices to publish and link information on the Web. This repository provides a SPARQL endpoint containing metadata about the different datasets published.</p>
+	  <h2>What is SPARQL</h2>
+	  <p>SPARQL is a query language for RDF. If you are not familiar with SPARQL, there are several resources that can help you learn the basics:</p>
+	  <ul>
+		  <li>
+			  <a href='http://tw.rpi.edu/2007/11/sparql-intro-gtw.pdf'>An Introduction to the SPARQL RDF Query Language</a> by Greg Williams
+		  </li>
+		  <li>
+			  A brief description of <a href='http://handbook.schoolofdata.org/en/latest/reference/rdf.html'>what is RDF and how to use SPARQL</a> by Alvaro Graves
+		  </li>
+		  <li>
+			  <a href='http://www.slideshare.net/olafhartig/an-introduction-to-sparql'>An introduction to SPARQL</a> by Olaf Hartig
+		  </li>
+		  <li>
+			  The specification of the <a href='http://www.w3.org/TR/rdf-sparql-query/'>SPARQL 1.0 Query Language</a>
+		  </li>
+		  <li>
+			  The specification of the <a href='http://www.w3.org/TR/rdf-sparql-query/'>SPARQL 1.1 Query Language</a>
+		  </li>
+</ul>	
+
+		 <h2>Data.rpi.edu SPARQL Endpoint</h2>
+		 <p>The SPARQL endpoint containing data from data.rpi.edu is located at <a href='http://escience.rpi.edu:8890/sparql'>http://escience.rpi.edu:8890/sparql</a>. You can execute SPARQL queries there. <strong>You need to specify http://data.rpi.edu as the graph you want to query</strong>.</p>
+		 
+		 <h3>Examples</h3>
+		 <p>There are some basic queries you can execute to obtain information about the datasets hosted in data.rpi.edu and their contributors.</p>
+		 <h4>Query about all the contributors</h4>
+		 <pre class="prettyprint">
+			 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+			 PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+			 
+			 SELECT DISTINCT ?resource ?resourceLabel WHERE {
+			       ?resource a foaf:Agent;
+			                 rdfs:label ?resourceLabel .
+			 }order by ?resourceLabel		
+		 </pre>
+		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=PREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0ASELECT+DISTINCT+%3Fresource+%3FresourceLabel+WHERE+%7B%0D%0A%09%09%09+++++++%3Fresource+a+foaf%3AAgent%3B%0D%0A%09%09%09+++++++++++++++++rdfs%3Alabel+%3FresourceLabel+.%0D%0A%09%09%09+%7Dorder+by+%3FresourceLabel%09%09&debug=on&timeout=&format=text%2Fhtml&save=display&fname='>here</a>.</p>
+		 <h4>Query about all the contributors</h4>
+		 <pre class="prettyprint">
+			 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+			 PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+			 
+			 SELECT DISTINCT ?resource ?resourceLabel WHERE {
+			       ?resource a foaf:Agent;
+			                 rdfs:label ?resourceLabel .
+			 }order by ?resourceLabel		
+		 </pre>
+		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=PREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0ASELECT+DISTINCT+%3Fresource+%3FresourceLabel+WHERE+%7B%0D%0A%09%09%09+++++++%3Fresource+a+foaf%3AAgent%3B%0D%0A%09%09%09+++++++++++++++++rdfs%3Alabel+%3FresourceLabel+.%0D%0A%09%09%09+%7Dorder+by+%3FresourceLabel%09%09&debug=on&timeout=&format=text%2Fhtml&save=display&fname='>here</a>.</p>
+		 <h4>Datasets where a specific person has been a creator or contributor</h4>
+		 <p>In this case we will look for the datasets related to Pauline Oliveros</p>
+		 <pre class="prettyprint">
+			 PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
+			 
+			 SELECT ?dataset ?datasetLabel WHERE{
+			   ?dataset dc:title ?datasetLabel .
+			   {
+			    ?dataset dc:contributor &lt;http://data.rpi.edu/contributor/paulineoliveros&gt;
+			   }UNION{
+			    ?dataset dc:creator &lt;http://data.rpi.edu/contributor/paulineoliveros&gt;
+			   }
+			 }ORDER BY ?datasetLabel
+		 </pre>
+		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=PREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Felements%2F1.1%2F%3E%0D%0A%09%09%09+%0D%0A%09%09%09+SELECT+%3Fdataset+%3FdatasetLabel+WHERE%7B%0D%0A%09%09%09+++%3Fdataset+dc%3Atitle+%3FdatasetLabel+.%0D%0A%09%09%09+++%7B%0D%0A%09%09%09++++%3Fdataset+dc%3Acontributor+%3Chttp%3A%2F%2Fdata.rpi.edu%2Fcontributor%2Fpaulineoliveros%3E%0D%0A%09%09%09+++%7DUNION%7B%0D%0A%09%09%09++++%3Fdataset+dc%3Acreator+%3Chttp%3A%2F%2Fdata.rpi.edu%2Fcontributor%2Fpaulineoliveros%3E%0D%0A%09%09%09+++%7D%0D%0A%09%09%09+%7DORDER+BY+%3FdatasetLabel&debug=on&timeout=&format=text%2Fhtml&save=display&fname='>here</a>.</p>
+
+		 <h4>Return description of a dataset in RDF</h4>
+		 <pre class="prettyprint">
+			 DESCRIBE &lt;http://data.rpi.edu/architecture/main/performance_of_a_sensory_substitution_system_to_present_music_via_touch&gt;
+		 </pre>
+		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=describe+%3Chttp%3A%2F%2Fdata.rpi.edu%2Farchitecture%2Fmain%2Fperformance_of_a_sensory_substitution_system_to_present_music_via_touch%3E&debug=on&timeout=&format=text%2Frdf%2Bn3&save=display&fname='>here</a>.</p>
+
+
+      <!--p>Linked Data describes a set of good practices to publish and link information on the Web. This repository uses several Linked Data tecnologies and techniques to publish the metadata about our datasets:</p>
       <ul>
         <li>Using <a href='http://en.wikipedia.org/wiki/Uniform_resource_identifier'>URIs</a> to identify things (in this case, datasets, contributors, etc.)</li>
         <li>Provide data in multiple representations, using <a href='http://en.wikipedia.org/wiki/Content_negotiation'>content negotiation</a>.</li>
@@ -83,7 +154,7 @@ curl -LH 'Accept: application/rdf+xml' http://data.rpi.edu/architecture/main/Per
         <li><a href='http://logd.tw.rpi.edu'>Linked Open Government Data, Tetherless World Constellation</a>
         <li><a href='http://www.w3.org/standards/semanticweb/data'>W3C page on Linked Data</a></li>
         <li><a href='http://linkeddatabook.com/editions/1.0/'>Online book on Linked Data</a></li>
-     </ul>
+     </ul-->
     </div>
     </div>
 {%include "../../footer.inc"%}
