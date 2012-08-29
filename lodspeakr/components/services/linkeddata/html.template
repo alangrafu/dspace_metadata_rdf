@@ -40,17 +40,7 @@
 			 }order by ?resourceLabel		
 		 </pre>
 		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=PREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0ASELECT+DISTINCT+%3Fresource+%3FresourceLabel+WHERE+%7B%0D%0A%09%09%09+++++++%3Fresource+a+foaf%3AAgent%3B%0D%0A%09%09%09+++++++++++++++++rdfs%3Alabel+%3FresourceLabel+.%0D%0A%09%09%09+%7Dorder+by+%3FresourceLabel%09%09&debug=on&timeout=&format=text%2Fhtml&save=display&fname='>here</a>.</p>
-		 <h4>Query about all the contributors</h4>
-		 <pre class="prettyprint">
-			 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-			 PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
-			 
-			 SELECT DISTINCT ?resource ?resourceLabel WHERE {
-			       ?resource a foaf:Agent;
-			                 rdfs:label ?resourceLabel .
-			 }order by ?resourceLabel		
-		 </pre>
-		 <p>You can see the results <a href='http://escience.rpi.edu:8890/sparql?default-graph-uri=&query=PREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0ASELECT+DISTINCT+%3Fresource+%3FresourceLabel+WHERE+%7B%0D%0A%09%09%09+++++++%3Fresource+a+foaf%3AAgent%3B%0D%0A%09%09%09+++++++++++++++++rdfs%3Alabel+%3FresourceLabel+.%0D%0A%09%09%09+%7Dorder+by+%3FresourceLabel%09%09&debug=on&timeout=&format=text%2Fhtml&save=display&fname='>here</a>.</p>
+
 		 <h4>Datasets where a specific person has been a creator or contributor</h4>
 		 <p>In this case we will look for the datasets related to Pauline Oliveros</p>
 		 <pre class="prettyprint">
